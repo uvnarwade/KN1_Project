@@ -16,8 +16,8 @@ OR
 conda activate venv
 ```
 
-```
-pip install -r requirements.txt
+```git add .
+
 ```
 
 To Add files to git
