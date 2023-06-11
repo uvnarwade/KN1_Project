@@ -7,48 +7,57 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
-@dataclass
-class DataingestionConfig:
-    train_data_path:str=os.path.join("artifacts","train.csv") #it will save the train data into artifacts folder with naim train.csv
-    test_data_path:str=os.path.join("artifacts","test.csv")
-    raw_data_path:str=os.path.join("artifacts","raw.csv")
+from src.components.data_transformation import DataTransformation
+from src.components.data_transformation import DataTransformationConfig
 
-class Dataingestion:
+from src.components.model_trainer import ModelTrainingConfig
+from src.components.model_trainer import ModelTrainer
+
+@dataclass
+class DataIngestionConfig:
+    train_data_path: str=os.path.join('artifacts',"train.csv")
+    test_data_path: str=os.path.join('artifacts',"test.csv")
+    raw_data_path: str=os.path.join('artifacts',"data.csv")
+
+class DataIngestion:
     def __init__(self):
-        self.ingestion_config=DataingestionConfig()
+        self.ingestion_config=DataIngestionConfig()
 
     def initiate_data_ingestion(self):
-        logging.info("Entered the Data ingestion method or component") # it will show in to the logging, it is used only for logging
-
-
+        logging.info("Entered the data ingestion method or component")
         try:
-            df=pd.read_csv("notebook\data\stud.csv")
-            logging.info("Read the dataset as data frame")
+            df=pd.read_csv('notebook\data\stud.csv')
+            logging.info('Read the dataset as dataframe')
 
-            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok=True) #jar ka path exist kels tar to ok aahe navin create karaichi garaj nai
+            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok=True)
 
             df.to_csv(self.ingestion_config.raw_data_path,index=False,header=True)
 
-            logging.info("Train Test split Initiated")
+            logging.info("Train test split initiated")
             train_set,test_set=train_test_split(df,test_size=0.2,random_state=42)
 
             train_set.to_csv(self.ingestion_config.train_data_path,index=False,header=True)
 
             test_set.to_csv(self.ingestion_config.test_data_path,index=False,header=True)
 
-            logging.info("Ingestion of data is completed")
+            logging.info("Inmgestion of the data iss completed")
 
             return(
                 self.ingestion_config.train_data_path,
                 self.ingestion_config.test_data_path
 
             )
-        
-
         except Exception as e:
             raise CustomException(e,sys)
         
-
 if __name__=="__main__":
-    obj=Dataingestion()
-    obj.initiate_data_ingestion()
+    obj=DataIngestion()
+    train_data,test_data=obj.initiate_data_ingestion()
+
+    data_transformation=DataTransformation()
+    train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data,test_data)
+
+    modeltriner=ModelTrainer()
+    print(modeltriner.initiate_model_trainer(train_arr,test_arr))
+
+
