@@ -93,3 +93,5 @@ new changes is done
 
 
 local host= http://127.0.0.1:5000/
+
+deployment on elastic binstock-https://www.youtube.com/watch?v=gbJn2Ls2QsI
